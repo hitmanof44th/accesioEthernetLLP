@@ -23,7 +23,6 @@ namespace AccesIO
         //=========================================================================================
         private byte[] readAllInfo = new byte[] { 0x06, 0x52, 0x53, 0x74, 0x61, 0x01, 0x01 };
         private byte[] checkOnline = new byte[] { 0x0d, 0x43, 0x68, 0x49, 0x4f, 0x06, 0xff, 0xff, 0xff, 0xff, 0x00, 0x00, 0x01, 0xff };
-        private byte[] readAllData = new byte[] { 0x04, 0x52, 0x41, 0x44, 0x49 };
 
 
         //=========================================================================================
@@ -177,7 +176,7 @@ namespace AccesIO
         //=========================================================================================
         public void GetAllData()
         {
-
+            byte[] readAllData = new byte[] { 0x04, 0x52, 0x41, 0x44, 0x49 };
             xclient.Send(readAllData);
             xclient.sendDone.WaitOne();
             xclient.Receive();
@@ -212,48 +211,6 @@ namespace AccesIO
 
         }
 
-        //=========================================================================================
-        public string GetDeviceInfo()
-        {
-
-            xclient.Send(readAllInfo);
-            xclient.sendDone.WaitOne();
-            xclient.Receive();
-            xclient.receiveDone.WaitOne();
-
-    
-            ////byte[] xx = Encoding.ASCII.GetBytes(xclient.response);
-
-            //if (GetReply(xclient.response) == ((int)replies.R_OK))
-            //{
-
-            //    foreach (Byte c in xx)
-            //    {
-
-            //        Console.WriteLine(c+"| {0:X}", c);
-
-            //    }
-
-
-            //}
-            //else
-            //{
-
-
-            //    #if DEBUG
-            //             Console.WriteLine("Reading Failed");
-            //    #endif
-
-
-
-
-            //}
-
-
-
-
-            return "ok";
-        }
         //=========================================================================================
         private void processUpdateData(int num,pointState status)
         {

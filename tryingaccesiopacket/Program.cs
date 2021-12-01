@@ -13,6 +13,7 @@ namespace tryingaccesiopacket
 
             AccesioEthernet client = new AccesioEthernet();
             client.StartCommunication();
+            client.GetDeviceInfo();
             client.pointChangedStatus += Client_relayChangedStatus;
 
             //Console.WriteLine(client.ChangeRelay(AccesioEthernet.Relay.Five,AccesioEthernet.RelayStatus.ON));
