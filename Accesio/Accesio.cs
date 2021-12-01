@@ -15,8 +15,8 @@ namespace AccesIO
     {
 
         public socketClient xclient = null;
-        public List<relayInfo> relays = new List<relayInfo>();
-        public event EventHandler<relayInfo> relayChangedStatus;
+        public List<pointInfo> points = new List<pointInfo>();
+        public event EventHandler<pointInfo> pointChangedStatus;
         private Timer statusLoop;
 
 
@@ -37,7 +37,7 @@ namespace AccesIO
             return new byte[] { 0x11, 0x57, 0x50, 0x44, 0x4f, 0x0c, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00 };
         }
         //=========================================================================================
-        private byte[] ControlRelay(relay relay, relayState change)
+        private byte[] ControlRelay(relay relay, pointState change)
         {
             return new byte[] { 0x11, 0x57, 0x50, 0x44, 0x4f, 0x0c, (byte)relay, 0x00, 0x00, 0x00, 0x00, 0x00, (byte)change, 0x00, 0x00, 0x00, 0x00, 0x00 };
         }
@@ -49,7 +49,7 @@ namespace AccesIO
         }
 
         //=========================================================================================
-        public string ChangeRelay(relay relay,relayState Change)
+        public string ChangeRelay(relay relay,pointState Change)
         {
 
 //            xclient.Send(ControlRelay(relay, Change));
@@ -192,11 +192,11 @@ namespace AccesIO
                 {
                     if ((pData[i / 8] & (1 << (i % 8))) != 0)  // looks complicated but efficiet | borrowed from acessio example
                     {
-                        processUpdateData(i, relayState.OFF);
+                        processUpdateData(i, pointState.OFF);
                     }
                     else
                     {
-                        processUpdateData(i, relayState.ON);
+                        processUpdateData(i, pointState.ON);
                     }
 
                 }
@@ -255,22 +255,40 @@ namespace AccesIO
             return "ok";
         }
         //=========================================================================================
-        private void processUpdateData(int num,relayState status)
+        private void processUpdateData(int num,pointState status)
         {
+            pointType xType;
+            if(num >= 16)
+            {
+                xType = pointType.Input;
+                num = num - 16;
+                if (status == pointState.ON) // just make it more readable 
+                {
+                    status = pointState.OFF;
+                }
+                else
+                {
+                    status = pointState.ON;
+                }
+            }
+            else
+            {
+                xType = pointType.Relay;
+            }
 
-            if (relays.Where(x => x.num == num).Any())
+            if (points.Where(x => x.num == num && x.type == xType).Any())
             {
 
-                if (relays.Where(x => x.num == num).Single().status != status)
+                if (points.Where(x => x.num == num && x.type == xType).Single().status != status)
                 {
-                    relays.Where(x => x.num == num).Single().status = status;
-                    relayChangedStatus(this, relays.Where(x => x.num == num).Single());
+                    points.Where(x => x.num == num && x.type == xType).Single().status = status;
+                    pointChangedStatus(this, points.Where(x => x.num == num && x.type == xType).Single());
                 }
 
             }
             else
             {
-                relays.Add(new relayInfo { num = num, status = status });
+                points.Add(new pointInfo { num = num, status = status,type=xType });
             }
 
 

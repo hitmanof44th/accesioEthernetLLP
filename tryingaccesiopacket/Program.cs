@@ -13,7 +13,7 @@ namespace tryingaccesiopacket
 
             AccesioEthernet client = new AccesioEthernet();
             client.StartCommunication();
-            client.relayChangedStatus += Client_relayChangedStatus;
+            client.pointChangedStatus += Client_relayChangedStatus;
 
             //Console.WriteLine(client.ChangeRelay(AccesioEthernet.Relay.Five,AccesioEthernet.RelayStatus.ON));
            // Console.WriteLine(client.GetAllData());
@@ -26,9 +26,9 @@ namespace tryingaccesiopacket
 
             }
 
-        private static void Client_relayChangedStatus(object sender, AccesIO.Assets.relayInfo e)
+        private static void Client_relayChangedStatus(object sender, AccesIO.Assets.pointInfo e)
         {
-            Console.WriteLine("relaychange:"+e.num+" Status:"+e.status.ToString());
+            Console.WriteLine(e.type+" pointchange:"+e.num+" Status:"+e.status.ToString());
         }
     }
     }

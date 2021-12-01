@@ -6,10 +6,11 @@ using System.Threading.Tasks;
 
 namespace AccesIO.Assets
 {
-    public class relayInfo
+    public class pointInfo
     {
         public int num { get; set; } = 0;
-        public relayState status { get; set; } = relayState.OFF;
+        public pointState status { get; set; } = pointState.OFF;
+        public pointType type { get; set; } = pointType.Input;
 
     }
 
