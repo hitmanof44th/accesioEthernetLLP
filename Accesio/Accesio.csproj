@@ -44,7 +44,6 @@
     <Compile Include="Accesio.cs" />
     <Compile Include="Assets.cs" />
     <Compile Include="Client.cs" />
-    <Compile Include="DeviceInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="pointInfo.cs" />
     <Compile Include="StateObject.cs" />

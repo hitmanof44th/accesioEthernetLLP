@@ -18,27 +18,16 @@ namespace AccesIO
         public List<pointInfo> points = new List<pointInfo>();
         public event EventHandler<pointInfo> pointChangedStatus;
         private Timer statusLoop;
-
-
-        //=========================================================================================
-        private byte[] readAllInfo = new byte[] { 0x06, 0x52, 0x53, 0x74, 0x61, 0x01, 0x01 };
-        private byte[] checkOnline = new byte[] { 0x0d, 0x43, 0x68, 0x49, 0x4f, 0x06, 0xff, 0xff, 0xff, 0xff, 0x00, 0x00, 0x01, 0xff };
-
+        private Byte[] pData = new byte[] { 0, 0, 0, 0, 0, 0 };
 
         //=========================================================================================
-        private byte[] Pin0on()
+        private byte[] ControlRelay(Int32 i, pointState change)
         {
-            return new byte[] { 0x11, 0x57, 0x50, 0x44, 0x4f, 0x0c, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
-        }
-        //=========================================================================================
-        private byte[] Pin0off()
-        {
-            return new byte[] { 0x11, 0x57, 0x50, 0x44, 0x4f, 0x0c, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00 };
-        }
-        //=========================================================================================
-        private byte[] ControlRelay(relay relay, pointState change)
-        {
-            return new byte[] { 0x11, 0x57, 0x50, 0x44, 0x4f, 0x0c, (byte)relay, 0x00, 0x00, 0x00, 0x00, 0x00, (byte)change, 0x00, 0x00, 0x00, 0x00, 0x00 };
+  
+            Int32 iOutMask = 0x0000; 
+            iOutMask = ((pData[i / 8]) & (1 << (i % 8))); // get single bit
+            return new byte[] { 0x11, 0x57, 0x50, 0x44, 0x4f, 0x0c, (byte)iOutMask, 0x00, 0x00, 0x00, 0x00, 0x00, (byte)change, 0x00, 0x00, 0x00, 0x00, 0x00 };
+
         }
 
         //=========================================================================================
@@ -48,166 +37,61 @@ namespace AccesIO
         }
 
         //=========================================================================================
-        public string ChangeRelay(relay relay,pointState Change)
+        public bool ChangeRelay(Int32 i, pointState Change)
         {
 
-//            xclient.Send(ControlRelay(relay, Change));
-//            xclient.sendDone.WaitOne();
-//            xclient.Receive();
-//            xclient.receiveDone.WaitOne();
-
-
-//            byte[] xx = Encoding.ASCII.GetBytes(xclient.response);
-
-//            if (GetReply(xclient.response) == ((int)replies.R_OK))
-//            {
-
-//                foreach (Byte c in xx)
-//                {
-
-//                    Console.WriteLine(c + "| {0:X}", c);
-
-//                }
-
-
-//            }
-//            else
-//            {
-
-
-//#if DEBUG
-//                Console.WriteLine("Reading Failed");
-//#endif
-
-
-
-
-//            }
-
-
-
-
-            return "nope";
-        }
-        //=========================================================================================
-        public string Pinoff()
-        {
-
-//            xclient.Send(Pin0off());
-//            xclient.sendDone.WaitOne();
-//            xclient.Receive();
-//            xclient.receiveDone.WaitOne();
-
-
-//            byte[] xx = Encoding.ASCII.GetBytes(xclient.response);
-
-//            if (GetReply(xclient.response) == ((int)replies.R_OK))
-//            {
-
-//                foreach (Byte c in xx)
-//                {
-
-//                    Console.WriteLine(c + "| {0:X}", c);
-
-//                }
-
-
-//            }
-//            else
-//            {
-
-
-//#if DEBUG
-//                Console.WriteLine("Reading Failed");
-//#endif
-
-
-
-
-//            }
-
-
-
-
-            return "none";
-        }
-        //=========================================================================================
-        public string Pinon()
-        {
-
-//            xclient.Send(Pin0on());
-//            xclient.sendDone.WaitOne();
-//            xclient.Receive();
-//            xclient.receiveDone.WaitOne();
-
-
-//            byte[] xx = Encoding.ASCII.GetBytes(xclient.response);
-
-//            if (GetReply(xclient.response) == ((int)replies.R_OK))
-//            {
-
-//                foreach (Byte c in xx)
-//                {
-
-//                    Console.WriteLine(c + "| {0:X}", c);
-
-//                }
-
-
-//            }
-//            else
-//            {
-
-
-//#if DEBUG
-//                Console.WriteLine("Reading Failed");
-//#endif
-
-
-
-
-//            }
-
-
-
-
-            return "none";
-        }
-        //=========================================================================================
-        public void GetAllData()
-        {
-            byte[] readAllData = new byte[] { 0x04, 0x52, 0x41, 0x44, 0x49 };
-            xclient.Send(readAllData);
+            xclient.Send(ControlRelay(i, Change));
             xclient.sendDone.WaitOne();
             xclient.Receive();
             xclient.receiveDone.WaitOne();
 
-            if(GetReply(xclient.returnBuffer) == (int)replies.R_OK)
+            if (GetReply(xclient.returnBuffer) == (int)replies.R_OK)
             {
-
-                byte[] xx = xclient.returnBuffer;
-                Byte[] pData = new Byte[] { xx[6], xx[7], xx[8], xx[9] };
-                for (int i = 0; i < 32; i++)
-                {
-                    if ((pData[i / 8] & (1 << (i % 8))) != 0)  // looks complicated but efficiet | borrowed from acessio example
-                    {
-                        processUpdateData(i, pointState.OFF);
-                    }
-                    else
-                    {
-                        processUpdateData(i, pointState.ON);
-                    }
-
-                }
-
+                Console.WriteLine("all good");
+                return true;
             }
             else
             {
 
-                Console.WriteLine("error Reading status");
+                return false;
 
             }
-    
+
+
+        }
+
+        //=========================================================================================
+        public void GetAllData()
+        {
+
+
+
+                byte[] readAllData = new byte[] { 0x04, 0x52, 0x41, 0x44, 0x49 };
+                xclient.Send(readAllData);
+                xclient.sendDone.WaitOne();
+                xclient.Receive();
+                xclient.receiveDone.WaitOne();
+
+                if (GetReply(xclient.returnBuffer) == (int)replies.R_OK)
+                {
+
+                    byte[] xx = xclient.returnBuffer;
+                    pData = new Byte[] { xx[6], xx[7], xx[8], xx[9] };
+                    for (int i = 0; i < 32; i++)
+                    {
+                        if ((pData[i / 8] & (1 << (i % 8))) != 0)  // looks complicated but efficiet | borrowed from acessio example
+                        {
+                            processUpdateData(i, pointState.OFF);
+                        }
+                        else
+                        {
+                            processUpdateData(i, pointState.ON);
+                        }
+
+                    }
+
+                }
+           
 
         }
 

@@ -5,6 +5,6 @@ simple example
             
 			
 			
-			AccesioEthernet client = new AccesioEthernet();
-            client.StartCommunication();
-            client.pointChangedStatus += Client_relayChangedStatus;
+AccesioEthernet client = new AccesioEthernet();
+client.StartCommunication();
+client.pointChangedStatus += Client_relayChangedStatus;
