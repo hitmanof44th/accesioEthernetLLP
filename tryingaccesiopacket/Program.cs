@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading;
 using AccesIO;
-
+using AccesIO.Assets;
 
 namespace tryingaccesiopacket
 {
@@ -15,25 +15,17 @@ namespace tryingaccesiopacket
             AccesioEthernet client = new AccesioEthernet();
             client.StartCommunication();
             client.pointChangedStatus += Client_relayChangedStatus;
-
-            Thread.Sleep(2000);
-            client.ChangeRelay(3,AccesIO.Assets.pointState.ON);
-            Thread.Sleep(2000);
-            client.ChangeRelay(2, AccesIO.Assets.pointState.ON);
-            Thread.Sleep(2000);
-            client.ChangeRelay(1, AccesIO.Assets.pointState.ON);
-
-            Thread.Sleep(2000);
-            client.ChangeRelay(6, AccesIO.Assets.pointState.ON);
+            client.ChangeRelay(3,pointState.ON);
+           
 
             Console.WriteLine("\n Press Enter to continue...");
-                Console.Read();
+            Console.Read();
 
 
 
             }
 
-        private static void Client_relayChangedStatus(object sender, AccesIO.Assets.pointInfo e)
+        private static void Client_relayChangedStatus(object sender, pointInfo e)
         {
             Console.WriteLine(e.type+" pointchange:"+e.num+" Status:"+e.status.ToString());
         }
