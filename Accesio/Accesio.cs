@@ -37,7 +37,7 @@ namespace AccesIO
         }
 
         //=========================================================================================
-        public bool ChangeRelay(Int32 i, pointState Change)
+        public async Task<bool> ChangeRelay(Int32 i, pointState Change)
         {
 
             xclient.Send(ControlRelay(i, Change));
@@ -45,26 +45,36 @@ namespace AccesIO
             xclient.Receive();
             xclient.receiveDone.WaitOne();
 
+            bool xStat = false;
             if (GetReply(xclient.returnBuffer) == (int)replies.R_OK)
             {
-                Console.WriteLine("all good");
-                return true;
+                xStat = true;
             }
             else
             {
-
-                return false;
-
+                xStat = false;
             }
 
+            return await Task.FromResult(xStat);
+        }
 
+        //=========================================================================================
+        public async Task<pointInfo> GetInputInfo(int num)
+        {
+            var pointdata = points.Where(x => x.num == num && x.type == pointType.Input).SingleOrDefault();
+            return await Task.FromResult(pointdata);
+        }
+
+        //=========================================================================================
+        public async Task<pointInfo> GetRelayInfo(int num)
+        {
+            var pointdata = points.Where(x => x.num == num && x.type == pointType.Relay).SingleOrDefault();
+            return await Task.FromResult(pointdata);
         }
 
         //=========================================================================================
         public void GetAllData()
         {
-
-
 
                 byte[] readAllData = new byte[] { 0x04, 0x52, 0x41, 0x44, 0x49 };
                 xclient.Send(readAllData);
