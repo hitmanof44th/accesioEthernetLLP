@@ -150,7 +150,6 @@ namespace AccesIO
             GetAllData();
         }
 
-
         //=========================================================================================
         public void StartCommunication(string ip = "192.168.1.174", int port = 51936)
         {
