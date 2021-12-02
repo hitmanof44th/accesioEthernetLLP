@@ -14,8 +14,9 @@ namespace tryingaccesiopacket
             AccesioEthernet client = new AccesioEthernet();
             client.StartCommunication();
             client.pointChangedStatus += Client_relayChangedStatus;
-            client.ChangeRelay(3,pointState.ON);
-           
+       
+
+
 
             Console.WriteLine("\n Press Enter to continue...");
             Console.Read();

@@ -1,5 +1,6 @@
 ﻿using AccesIO.Assets;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -16,14 +17,24 @@ namespace AccesIO
         public event EventHandler<pointInfo> pointChangedStatus;
         private Timer statusLoop;
         private Byte[] pData = new byte[] { 0, 0, 0, 0, 0, 0 };
+        private Hashtable pp = new Hashtable(){{0, 1},{1,2}, { 2, 4 }, { 3, 4 }, { 4, 8 }, { 5, 16 }, { 6, 32 }, { 7, 32 } };
 
         //=========================================================================================
-        private byte[] ControlRelay(Int32 i, pointState change)
+        private byte[] ControlRelay(int tag, pointState change)
         {
-  
-            Int32 iOutMask = 0x0000; 
-            iOutMask = ((pData[i / 8]) & (1 << (i % 8))); // get single bit
-            return new byte[] { 0x11, 0x57, 0x50, 0x44, 0x4f, 0x0c, (byte)iOutMask, 0x00, 0x00, 0x00, 0x00, 0x00, (byte)change, 0x00, 0x00, 0x00, 0x00, 0x00 };
+
+
+          
+            if (change == pointState.OFF)
+            {
+               
+                 return new byte[] { 0x11, 0x57, 0x50, 0x44, 0x4f, 0x0c, Convert.ToByte(pp[tag]), 0x00, 0x00, 0x00, 0x00, 0x00, Convert.ToByte(pp[tag]), 0x00, 0x00, 0x00, 0x00, 0x00 };
+            }
+            else 
+            {
+
+             return new byte[] { 0x11, 0x57, 0x50, 0x44, 0x4f, 0x0c, Convert.ToByte(pp[tag]), 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+           }
 
         }
 
@@ -51,7 +62,6 @@ namespace AccesIO
             {
                 xStat = false;
             }
-
             return await Task.FromResult(xStat);
         }
 
